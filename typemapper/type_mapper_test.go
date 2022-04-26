@@ -268,28 +268,27 @@ func (r *Root) OrQueryType() typemapper.QueryTypeMapper {
 	return typemapper.NewCustomQueryTypeBuilder().
 		SetTypeMapperFunc(
 			func(field string, values []string) (interface{}, error) {
-				newQuery := &Root{}
 				value := values[0]
+				
+				for _, value := range strings.Split(value, ";") {
+					newQuery := &Root{}
+					subQuery := map[string][]string{}
 
-				subQuery := map[string][]string{}
-				{
-					for _, value := range strings.Split(value, ";") {
-						fieldValue := strings.SplitN(value, "=", 2)
-						if len(fieldValue) != 2 {
-							continue
+					fieldValue := strings.SplitN(value, "=", 2)
+					if len(fieldValue) != 2 {
+						continue
+					}
+					subQuery[fieldValue[0]] = append(subQuery[fieldValue[0]], fieldValue[1])
+					f := newQuery.Factory()
+					for subField, subQuerys := range subQuery {
+						_, err := f.MapRegexField(subField, subQuerys)
+						if err != nil {
+							return nil, err
 						}
-						subQuery[fieldValue[0]] = append(subQuery[fieldValue[0]], fieldValue[1])
 					}
+					r.Or = append(r.Or, newQuery)
 				}
-				f := newQuery.Factory()
-				for subField, subQuerys := range subQuery {
-					_, err := f.MapRegexField(subField, subQuerys)
-					if err != nil {
-						return nil, err
-					}
-				}
-
-				r.Or = append(r.Or, newQuery)
+			
 				return nil, nil
 			},
 		).

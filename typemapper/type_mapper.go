@@ -130,6 +130,13 @@ func (q *QueryTypeFactory) AddField(field string, queryType QueryTypeMapper) *Qu
 	return q
 }
 
+// Implement Factory interface
+func (q *QueryTypeFactory) AddQueryTypeMapperField(field string, queryType QueryTypeMapper) {
+	if _, find := q.Querys[field]; !find {
+		q.AddField(field, queryType)
+	}
+}
+
 func (q *QueryTypeFactory) Validate(field string, values []string) error {
 	typeMapper, find := q.Querys[field]
 	if !find {
