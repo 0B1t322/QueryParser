@@ -1,9 +1,7 @@
 package validator
 
 import (
-	"fmt"
-
-	"github.com/pkg/errors"
+	
 )
 
 // Validations describe map of query valiues with their validations
@@ -38,21 +36,5 @@ func MergeValidationsFunc(funcs ...ValidateFunc) ValidateFunc {
 		}
 
 		return nil
-	}
-}
-
-// TypeIs check the type of value passed to ValidateFunc
-// 
-// catchable errors:
-// 	UnexpectedType as target
-// Target errors catch by:
-// 		errors.Is(err, UnexpectedType)
-func TypeIs[T any]() ValidateFunc {
-	return func(value interface{}) error {
-		if _, ok := value.(T); ok {
-			return nil
-		}
-
-		return errors.Wrap(UnexpectedType, fmt.Sprintf("Expected type: %T, actual type: %T", *new(T), value))
 	}
 }

@@ -8,10 +8,30 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TypeIsInt() validator.ValidateFunc {
+	return func(value interface{}) error {
+		_, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("Bad type")
+		}
+		return nil
+	}
+}
+
+func TypeIsString() validator.ValidateFunc {
+	return func(value interface{}) error {
+		_, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("Bad type")
+		}
+		return nil
+	}
+}
+
 func TestFunc_Validator(t *testing.T) {
 	validations := validator.Validations{
 		"field_1": nil,
-		"field_2": validator.TypeIs[int](),
+		"field_2": TypeIsInt(),
 		"field_3": func(value interface{}) error {
 			number := value.(int)
 			{
@@ -23,7 +43,7 @@ func TestFunc_Validator(t *testing.T) {
 			}
 		},
 		"field_4": validator.MergeValidationsFunc(
-			validator.TypeIs[string](),
+			TypeIsString(),
 			func(value interface{}) error {
 				v := value.(string)
 				{
