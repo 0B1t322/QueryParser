@@ -1,15 +1,12 @@
 # Query Parser
----
 Query Parser is library to create your own format to parse query values
 
 ## Installation
----
 ```bash
 go get -u github.com/0B1t322/QueryParser
 ```
 
 ## Fast start and usage
----
 See `cmd` dir and test for more examples.
 ```go
 package main
